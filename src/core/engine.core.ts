@@ -63,6 +63,11 @@ export async function createEngineCore(mountNode: HTMLElement): Promise<EngineCo
   const playerEntity = addEntity(world);
 
   addComponent(world, PlayerTagComponent, playerEntity);
+  addComponent(world, PositionComponent, playerEntity);
+  addComponent(world, VelocityComponent, playerEntity);
+  addComponent(world, WeaponComponent, playerEntity);
+  addComponent(world, ColliderComponent, playerEntity);
+  addComponent(world, RenderableComponent, playerEntity);
   PositionComponent.x[playerEntity] = GAME_WIDTH * 0.5;
   PositionComponent.y[playerEntity] = GAME_HEIGHT * 0.5;
   VelocityComponent.x[playerEntity] = 0;

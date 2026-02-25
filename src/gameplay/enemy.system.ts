@@ -26,6 +26,13 @@ export function enemySpawnSystem(context: EngineContext): void {
   const enemy = addEntity(context.world);
 
   addComponent(context.world, EnemyTagComponent, enemy);
+  addComponent(context.world, PositionComponent, enemy);
+  addComponent(context.world, VelocityComponent, enemy);
+  addComponent(context.world, EnemyBehaviorComponent, enemy);
+  addComponent(context.world, ColliderComponent, enemy);
+  addComponent(context.world, HealthComponent, enemy);
+  addComponent(context.world, DamageComponent, enemy);
+  addComponent(context.world, RenderableComponent, enemy);
   PositionComponent.x[enemy] = Math.random() * GAME_WIDTH;
   PositionComponent.y[enemy] = 40 + Math.random() * (GAME_HEIGHT - 120);
   VelocityComponent.x[enemy] = (Math.random() * 2 - 1) * archetype.speed;

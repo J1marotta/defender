@@ -18,6 +18,12 @@ export function spawnProjectileFromPlayer(context: EngineContext): void {
   const projectile = addEntity(context.world);
 
   addComponent(context.world, ProjectileTagComponent, projectile);
+  addComponent(context.world, PositionComponent, projectile);
+  addComponent(context.world, VelocityComponent, projectile);
+  addComponent(context.world, LifetimeComponent, projectile);
+  addComponent(context.world, DamageComponent, projectile);
+  addComponent(context.world, ColliderComponent, projectile);
+  addComponent(context.world, RenderableComponent, projectile);
   PositionComponent.x[projectile] = PositionComponent.x[player] + 18;
   PositionComponent.y[projectile] = PositionComponent.y[player];
   VelocityComponent.x[projectile] = 1.2;
@@ -33,6 +39,12 @@ export function spawnProjectileFromPlayer(context: EngineContext): void {
   if (Math.random() < doubleShotChance) {
     const second = addEntity(context.world);
     addComponent(context.world, ProjectileTagComponent, second);
+    addComponent(context.world, PositionComponent, second);
+    addComponent(context.world, VelocityComponent, second);
+    addComponent(context.world, LifetimeComponent, second);
+    addComponent(context.world, DamageComponent, second);
+    addComponent(context.world, ColliderComponent, second);
+    addComponent(context.world, RenderableComponent, second);
     PositionComponent.x[second] = PositionComponent.x[player] + 18;
     PositionComponent.y[second] = PositionComponent.y[player] - 8;
     VelocityComponent.x[second] = 1.2;
