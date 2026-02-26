@@ -1,6 +1,6 @@
 # Defender-style Web Prototype (Pixi + ECS)
 
-This repository contains an extendable prototype architecture for a Defender-inspired side scroller with:
+This repository now contains an extendable prototype architecture for a Defender-inspired side scroller with:
 
 - `pixi.js` rendering
 - data-driven content files
