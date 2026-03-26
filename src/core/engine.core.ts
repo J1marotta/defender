@@ -12,6 +12,11 @@ import { playerMovementSystem } from '../gameplay/player-movement.system';
 import { weaponSystem } from '../gameplay/weapon.system';
 import { createPersistedMetaState } from '../meta/meta-store.meta';
 import { baseMetaUpgradesData } from '../content/meta-upgrades.data';
+import {
+  createLiveTutorialState,
+  updateLiveTutorialSystem,
+  type LiveTutorialState,
+} from '../tutorial/live-tutorial.system';
 
 export const GAME_WIDTH = 1200;
 export const GAME_HEIGHT = 675;
@@ -22,7 +27,10 @@ export type EngineContext = {
   playerEntity: number;
   playerGraphic: Graphics;
   hudLabel: Text;
+  phaseLabel: Text;
+  tutorialLabel: Text;
   inputState: ReturnType<typeof createInputState>;
+  gamePhase: 'menu' | 'playing' | 'paused';
   currentTimeMs: number;
   deltaMs: number;
   runScore: number;
@@ -30,6 +38,7 @@ export type EngineContext = {
   runMultiplier: number;
   shotsFired: number;
   metaState: ReturnType<typeof createPersistedMetaState>;
+  liveTutorial: LiveTutorialState;
 };
 
 export async function createEngineCore(mountNode: HTMLElement): Promise<EngineContext> {
@@ -69,8 +78,25 @@ export async function createEngineCore(mountNode: HTMLElement): Promise<EngineCo
   hudLabel.y = 16;
   app.stage.addChild(hudLabel);
 
+  const phaseLabel = new Text({
+    text: '',
+    style: { fill: '#f5d06c', fontFamily: 'monospace', fontSize: 18 },
+  });
+  phaseLabel.x = 16;
+  phaseLabel.y = GAME_HEIGHT - 56;
+  app.stage.addChild(phaseLabel);
+
+  const tutorialLabel = new Text({
+    text: '',
+    style: { fill: '#a4f2df', fontFamily: 'monospace', fontSize: 14 },
+  });
+  tutorialLabel.x = GAME_WIDTH - 480;
+  tutorialLabel.y = 16;
+  app.stage.addChild(tutorialLabel);
+
   const inputState = createInputState();
   const metaState = createPersistedMetaState(baseMetaUpgradesData);
+  const liveTutorial = createLiveTutorialState();
 
   const context: EngineContext = {
     app,
@@ -78,7 +104,10 @@ export async function createEngineCore(mountNode: HTMLElement): Promise<EngineCo
     playerEntity,
     playerGraphic,
     hudLabel,
+    phaseLabel,
+    tutorialLabel,
     inputState,
+    gamePhase: 'menu',
     currentTimeMs: 0,
     deltaMs: 0,
     runScore: 0,
@@ -86,6 +115,7 @@ export async function createEngineCore(mountNode: HTMLElement): Promise<EngineCo
     runMultiplier: 1,
     shotsFired: 0,
     metaState,
+    liveTutorial,
   };
 
   app.ticker.add((ticker) => {
@@ -94,8 +124,18 @@ export async function createEngineCore(mountNode: HTMLElement): Promise<EngineCo
 
     updateInputState(context.inputState);
 
-    playerMovementSystem(context);
-    weaponSystem(context);
+    if (context.inputState.startPressed && context.gamePhase === 'menu') {
+      context.gamePhase = 'playing';
+    }
+    if (context.inputState.pausePressed && context.gamePhase !== 'menu') {
+      context.gamePhase = context.gamePhase === 'paused' ? 'playing' : 'paused';
+    }
+
+    if (context.gamePhase === 'playing') {
+      playerMovementSystem(context);
+      weaponSystem(context);
+    }
+    updateLiveTutorialSystem(context);
 
     const x = PositionComponent.x[playerEntity];
     const y = PositionComponent.y[playerEntity];
@@ -103,11 +143,30 @@ export async function createEngineCore(mountNode: HTMLElement): Promise<EngineCo
     playerGraphic.y = y;
 
     hudLabel.text = [
+      `Phase ${context.gamePhase.toUpperCase()}`,
       `Score ${Math.floor(context.runScore)}   Combo ${context.runCombo.toFixed(1)}   x${context.runMultiplier.toFixed(1)}`,
       `XP ${context.metaState.runtimeXp}   Meta ${context.metaState.metaCurrency}`,
       `Controller ${context.inputState.controllerConnected ? 'connected' : 'not connected'}   Shots ${context.shotsFired}`,
     ].join('\n');
+
+    phaseLabel.text = context.gamePhase === 'menu'
+      ? getStartPrompt(context)
+      : context.gamePhase === 'paused'
+        ? getResumePrompt(context)
+        : '';
   });
 
   return context;
+}
+
+function getStartPrompt(context: EngineContext): string {
+  return context.inputState.lastInputMode === 'controller'
+    ? 'Press A to start'
+    : 'Press Enter to start';
+}
+
+function getResumePrompt(context: EngineContext): string {
+  return context.inputState.lastInputMode === 'controller'
+    ? 'Paused — press Start to resume'
+    : 'Paused — press Esc/P to resume';
 }

@@ -19,6 +19,11 @@ npm run dev
 
 If you want to learn game dev by actually shipping features, follow **`docs/TUTORIAL.md`**.
 
+This repo now also includes an in-game **Live Tutorial panel** in the running build so you can keep the game open while editing:
+
+- **Keyboard:** `H` toggle panel, `[` / `]` previous/next step, `M` mark step complete
+- **Controller:** `Y` toggle panel, D-Pad left/right previous/next, `B` mark step complete
+
 It gives you a 3-feature path that teaches:
 
 1. **Menu + input-mode-aware UI**

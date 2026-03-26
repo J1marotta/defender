@@ -21,6 +21,11 @@ npm install
 npm run dev
 ```
 
+Live tutorial controls while the game is running:
+
+- **Keyboard**: `H` show/hide tutorial, `[` / `]` move between steps, `M` mark current step complete
+- **Controller**: `Y` show/hide, D-Pad left/right move steps, `B` mark complete
+
 Then skim these files once to build a mental map:
 
 - `src/core/engine.core.ts` → game bootstrap, per-frame loop, HUD
