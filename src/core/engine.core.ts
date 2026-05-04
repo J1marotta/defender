@@ -11,6 +11,7 @@ import { createInputState, updateInputState } from '../input/input-state.input';
 import { playerMovementSystem } from '../gameplay/player-movement.system';
 import { weaponSystem } from '../gameplay/weapon.system';
 import { createPersistedMetaState } from '../meta/meta-store.meta';
+import { createParallaxBackground, updateParallaxBackgroundSystem, type ParallaxBackgroundState } from '../rendering/parallax-background.system';
 import { baseMetaUpgradesData } from '../content/meta-upgrades.data';
 import {
   createLiveTutorialState,
@@ -39,6 +40,7 @@ export type EngineContext = {
   shotsFired: number;
   metaState: ReturnType<typeof createPersistedMetaState>;
   liveTutorial: LiveTutorialState;
+  parallaxBackground: ParallaxBackgroundState;
 };
 
 export async function createEngineCore(mountNode: HTMLElement): Promise<EngineContext> {
@@ -50,6 +52,9 @@ export async function createEngineCore(mountNode: HTMLElement): Promise<EngineCo
     antialias: false,
   });
   mountNode.appendChild(app.canvas);
+
+  const parallaxBackground = createParallaxBackground();
+  app.stage.addChild(parallaxBackground.root);
 
   const world = createWorld();
   const playerEntity = addEntity(world);
@@ -116,6 +121,7 @@ export async function createEngineCore(mountNode: HTMLElement): Promise<EngineCo
     shotsFired: 0,
     metaState,
     liveTutorial,
+    parallaxBackground,
   };
 
   app.ticker.add((ticker) => {
@@ -135,6 +141,7 @@ export async function createEngineCore(mountNode: HTMLElement): Promise<EngineCo
       playerMovementSystem(context);
       weaponSystem(context);
     }
+    updateParallaxBackgroundSystem(context);
     updateLiveTutorialSystem(context);
 
     const x = PositionComponent.x[playerEntity];
