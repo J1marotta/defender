@@ -33,3 +33,10 @@ It gives you a 3-feature path that teaches:
 Each chapter is designed so you discover the architecture yourself (systems/components/data/input/meta), with checkpoints and stretch goals, without handing you a copy-paste full solution.
 
 👉 Start here: **[docs/TUTORIAL.md](docs/TUTORIAL.md)**
+
+
+## Dev-only onboarding + asset generation
+
+- Onboarding path (not player-facing): `docs/ONBOARDING_TUTORIAL.md`
+- Prepare agent-sprite-forge pipeline: `npm run generate:assets`
+- Integrate generated parallax layers from `assets/generated/parallax/`
